@@ -1,5 +1,5 @@
 import * as dotenv from "dotenv";
-import osHelpers from "../lib/helpers.js";
+import osHelpers from "@/lib/helpers.js";
 
 dotenv.config();
 // Set the NODE_ENV to 'development' by default

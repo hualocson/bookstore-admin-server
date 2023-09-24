@@ -1,7 +1,7 @@
 import http from "http";
-import startApp from "./app.js";
-import logger from "./configs/logger.js";
-import configs from "./configs/vars.js";
+import startApp from "@/app";
+import logger from "@/configs/logger";
+import configs from "@/configs/vars";
 
 const server = http.createServer(startApp());
 

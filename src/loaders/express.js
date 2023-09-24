@@ -1,7 +1,7 @@
 import cors from "cors";
 import bodyParser from "body-parser";
-import morgan from "../configs/morgan.js";
-import configs from "../configs/vars.js";
+import morgan from "@/configs/morgan.js";
+import configs from "@/configs/vars.js";
 import helmet from "helmet";
 
 export default (app) => {
