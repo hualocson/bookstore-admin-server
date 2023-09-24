@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import morgan from "@/configs/morgan.js";
 import configs from "@/configs/vars.js";
 import helmet from "helmet";
+import routes from "@/apis";
 
 export default (app) => {
   if (!configs.isTest) {
@@ -33,7 +34,7 @@ export default (app) => {
   app.use(bodyParser.urlencoded({ extended: true }));
 
   // Load API routes
-  // app.use(configs.api.prefix_v1, routes)
+  app.use(configs.api.prefixV1, routes());
 
   // app.use(errorConverter)
   // app.use(errorHandler)
