@@ -7,6 +7,7 @@ process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 export default {
   port: osHelpers.toNumber(osHelpers.getOsEnv("SERVER_PORT")) || 5000,
+  dbUrl: osHelpers.getOsEnv("DB_URL"),
   isProduction: process.env.NODE_ENV === "production",
   isTest: process.env.NODE_ENV === "test",
   isDevelopment: process.env.NODE_ENV === "development",
@@ -17,6 +18,6 @@ export default {
    * API configs
    */
   api: {
-    prefix_v1: "/api/v1",
+    prefixV1: "/api/v1",
   },
 };
