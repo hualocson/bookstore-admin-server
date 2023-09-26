@@ -18,6 +18,21 @@ const authRoutes = (router) => {
       .withMessage("password must be a string!"),
     authController.hashPassword
   );
+
+  router.post(
+    "/auth/login",
+    body("username")
+      .exists()
+      .withMessage("username required!")
+      .isString()
+      .withMessage("username must be a string!"),
+    body("password")
+      .exists()
+      .withMessage("password required!")
+      .isString()
+      .withMessage("password must be a string!"),
+    authController.loginAdmin
+  );
 };
 
 export default authRoutes;

@@ -24,4 +24,8 @@ export default {
   api: {
     prefixV1: "/api/v1",
   },
+
+  // JWT
+  jwtSecret: osHelpers.getOsEnv("JWT_SECRET"),
+  jwtExpiresIn: osHelpers.getOsEnv("JWT_EXPIRES_IN"),
 };
