@@ -9,6 +9,7 @@ const sql = postgres({
   username: dbUser,
   password: dbPassword,
   database: dbName,
+  transform: postgres.camel,
 });
 
 export default sql;
