@@ -4,6 +4,7 @@ import { validationResult } from "express-validator";
 /**
  * @callback AsyncHandlerFunction
  * @param {import('express').Request} req
+ * @param {import('express').Response} res
  * @param {Object} helpers
  * @param {import('@/lib/response.handler').ErrorResponse} helpers.errorResponse
  * @param {import('@/lib/response.handler').SuccessResponse} helpers.successResponse
@@ -27,7 +28,7 @@ export const controllerWrapper = (callback) => async (req, res, next) => {
   }
 
   try {
-    await callback(req, {
+    await callback(req, res, {
       errorResponse,
       successResponse,
       successResponseWithEmptyBody,
