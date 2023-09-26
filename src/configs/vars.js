@@ -6,8 +6,12 @@ dotenv.config();
 process.env.NODE_ENV = process.env.NODE_ENV || "development";
 
 export default {
-  port: osHelpers.toNumber(osHelpers.getOsEnv("SERVER_PORT")) || 5000,
-  dbUrl: osHelpers.getOsEnv("DB_URL"),
+  port: osHelpers.toNumber(osHelpers.getOsEnv("PORT")) || 5000,
+  dbHost: osHelpers.getOsEnv("PG_HOST"),
+  dbPort: osHelpers.getOsEnv("PG_PORT"),
+  dbUser: osHelpers.getOsEnv("PG_USER"),
+  dbPassword: osHelpers.getOsEnv("PG_PASSWORD"),
+  dbName: osHelpers.getOsEnv("PG_DATABASE"),
   isProduction: process.env.NODE_ENV === "production",
   isTest: process.env.NODE_ENV === "test",
   isDevelopment: process.env.NODE_ENV === "development",
