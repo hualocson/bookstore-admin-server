@@ -1,12 +1,23 @@
-import sql from "@/configs/db";
-import { camelize } from "@/lib/utils";
+import authController from "../controllers/auth.controller";
+import { body } from "express-validator";
 
 const authRoutes = (router) => {
-  router.get("/auth", async (req, res) => {
-    const q = await sql`Select * From admin.admins`;
+  router.get("/auth", authController.getAdmin);
 
-    res.json({ data: camelize(q) });
-  });
+  router.post(
+    "/auth/hash-password",
+    body("username")
+      .exists()
+      .withMessage("username required!")
+      .isString()
+      .withMessage("username must be a string!"),
+    body("password")
+      .exists()
+      .withMessage("password required!")
+      .isString()
+      .withMessage("password must be a string!"),
+    authController.hashPassword
+  );
 };
 
 export default authRoutes;

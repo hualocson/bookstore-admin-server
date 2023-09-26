@@ -4,6 +4,7 @@ import morgan from "@/configs/morgan.js";
 import configs from "@/configs/vars.js";
 import helmet from "helmet";
 import routes from "@/apis";
+import { errorConverter, errorHandler } from "@/middlewares/error.handler";
 
 export default (app) => {
   if (!configs.isTest) {
@@ -36,6 +37,6 @@ export default (app) => {
   // Load API routes
   app.use(configs.api.prefixV1, routes());
 
-  // app.use(errorConverter)
-  // app.use(errorHandler)
+  app.use(errorConverter);
+  app.use(errorHandler);
 };
