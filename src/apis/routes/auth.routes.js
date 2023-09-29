@@ -33,6 +33,9 @@ const authRoutes = (router) => {
       .withMessage("password must be a string!"),
     authController.loginAdmin
   );
+
+  router.post("/auth/verify", authController.verifyToken);
+  router.post("/auth/logout", authController.logoutAdmin);
 };
 
 export default authRoutes;

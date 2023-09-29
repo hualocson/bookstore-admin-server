@@ -4,6 +4,7 @@ import morgan from "@/configs/morgan.js";
 import configs from "@/configs/vars.js";
 import helmet from "helmet";
 import routes from "@/apis";
+import cookieParser from "cookie-parser";
 import { errorConverter, errorHandler } from "@/middlewares/error.handler";
 
 export default (app) => {
@@ -14,6 +15,7 @@ export default (app) => {
 
   app.use(helmet());
 
+  app.use(cookieParser());
   app.get("/status", (req, res) => {
     res.status(200).end();
   });

@@ -1,6 +1,6 @@
 import { controllerWrapper } from "@/lib/controller.wrapper";
 import authUtils from "@/lib/utils/auth.utils";
-import { jwtGenerator } from "@/lib/utils/jwt.utils";
+import { jwtGenerator, verifyJwt } from "@/lib/utils/jwt.utils";
 import jwt from "jsonwebtoken";
 
 const authController = {
@@ -74,10 +74,39 @@ const authController = {
 
       return successResponse(
         {
-          token: jwt.decode(token),
+          payload: jwt.decode(token),
         },
         "Login successful."
       );
+    }
+  ),
+  logoutAdmin: controllerWrapper(async (req, res, { successResponse }) => {
+    res.cookie("admin-auth", "", {
+      secure: false,
+      httpOnly: true,
+      sameSite: "strict",
+      expires: new Date(0),
+    });
+
+    return successResponse({}, "Logout successful.", 200);
+  }),
+
+  verifyToken: controllerWrapper(
+    async (req, _, { errorResponse, successResponse }) => {
+      const token = req.cookies["admin-auth"];
+
+      if (!token) return errorResponse("Token not found.", 404);
+
+      const { payload, error } = verifyJwt(req.cookies["admin-auth"]);
+
+      if (error) {
+        if (error.name === "TokenExpiredError")
+          return errorResponse("Token expired.", 401);
+
+        return errorResponse("Token invalid.", 401);
+      }
+
+      return successResponse({ payload }, "Verify token successful", 200);
     }
   ),
 };

@@ -35,16 +35,9 @@ Error
  */
 
 /**
- * @callback SuccessResponseWithEmptyBody This function is used to send success response to client with standard format with empty body
- * @param {string} message
- * @param {number} [statusCode=200]
- * @returns {void}
- */
-
-/**
  * @function
  * @param {import('express').Response} res
- * @returns {{errorResponse: ErrorResponse, successResponse: SuccessResponse, successResponseWithEmptyBody: SuccessResponseWithEmptyBody}}
+ * @returns {{errorResponse: ErrorResponse, successResponse: SuccessResponse}}
  */
 const createResponseHandler = (res) => {
   /**
@@ -75,22 +68,9 @@ const createResponseHandler = (res) => {
     });
   };
 
-  /**
-   * @type {SuccessResponseWithEmptyBody} successResponseWithEmptyBody
-   */
-  const successResponseWithEmptyBody = (message, statusCode) => {
-    res.status(statusCode).json({
-      status: "success",
-      data: {
-        message,
-      },
-    });
-  };
-
   return {
     errorResponse,
     successResponse,
-    successResponseWithEmptyBody,
   };
 };
 
