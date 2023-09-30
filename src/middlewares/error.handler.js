@@ -32,14 +32,16 @@ const errorHandler = (err, req, res, next) => {
   }
   res.locals.errorMessage = err.message;
 
+  const error = {
+    message,
+  };
   if (configs.isDevelopment) {
     logger.error(err);
+    if (!err.isOperational) error.stack = err.stack;
   }
   return res.status(statusCode).json({
     success: false,
-    error: {
-      message,
-    },
+    error,
   });
 };
 
