@@ -9,7 +9,7 @@ import { validationResult } from "express-validator";
  * @param {import('@/lib/response.handler').ErrorResponse} helpers.errorResponse
  * @param {import('@/lib/response.handler').SuccessResponse} helpers.successResponse
  * @param {import('postgres').Sql} helpers.sql
- * @returns
+ * @returns {Promise<void>}
  */
 
 /**
