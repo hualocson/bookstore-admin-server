@@ -1,5 +1,5 @@
 import assetsController from "../controllers/assets.controller";
-import adminAuthorization from "../middlewares/adminAuthorization";
+import adminAuthorization from "../middlewares/auth";
 import uploadFileMiddleware from "../middlewares/multer.middleware";
 const assetsRoutes = (router) => {
   // upload new asset

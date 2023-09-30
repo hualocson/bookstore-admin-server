@@ -13,3 +13,15 @@ export const camelize = (obj) =>
       acc[camelKey] = value;
     }
   });
+
+/**
+ * Generate slug with given string
+ * @param {string} str
+ * @returns {string}
+ */
+export const slugify = (str) => {
+  return str
+    .toLowerCase()
+    .replace(/[^\w ]+/g, "")
+    .replace(/ +/g, "-");
+};
