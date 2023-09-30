@@ -28,4 +28,11 @@ export default {
   // JWT
   jwtSecret: osHelpers.getOsEnv("JWT_SECRET"),
   jwtExpiresIn: osHelpers.getOsEnv("JWT_EXPIRES_IN"),
+
+  // Cloudinary
+  cloudinary: {
+    cloudName: osHelpers.getOsEnv("CLOUD_NAME"),
+    apiKey: osHelpers.getOsEnv("CLOUD_API_KEY"),
+    apiSecret: osHelpers.getOsEnv("CLOUD_API_SECRET"),
+  },
 };

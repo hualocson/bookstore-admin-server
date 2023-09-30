@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import ApiError from "@/lib/api-error";
 import configs from "@/configs/vars";
 import sql from "@/configs/db";
+import logger from "@/configs/logger";
 
 const errorConverter = (err, req, res, next) => {
   let error = err;
@@ -30,6 +31,10 @@ const errorHandler = (err, req, res, next) => {
     message = httpStatus[statusCode];
   }
   res.locals.errorMessage = err.message;
+
+  if (configs.isDevelopment) {
+    logger.error(err);
+  }
   return res.status(statusCode).json({
     success: false,
     error: {
