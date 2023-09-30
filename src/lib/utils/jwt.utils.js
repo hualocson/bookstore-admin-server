@@ -13,8 +13,11 @@ export function verifyJwt(token) {
     const payload = jwt.verify(token, configs.jwtSecret, {
       maxAge: configs.jwtExpiresIn,
     });
-    return payload;
+    return { payload, error: null };
   } catch (error) {
-    logger.error(error);
+    return {
+      payload: null,
+      error,
+    };
   }
 }

@@ -8,7 +8,6 @@ import { validationResult } from "express-validator";
  * @param {Object} helpers
  * @param {import('@/lib/response.handler').ErrorResponse} helpers.errorResponse
  * @param {import('@/lib/response.handler').SuccessResponse} helpers.successResponse
- * @param {import('@/lib/response.handler').SuccessResponseWithEmptyBody} helpers.successResponseWithEmptyBody
  * @param {import('postgres').Sql} helpers.sql
  * @returns
  */
@@ -19,8 +18,7 @@ import { validationResult } from "express-validator";
  * @returns {import('express').RequestHandler}
  */
 export const controllerWrapper = (callback) => async (req, res, next) => {
-  const { errorResponse, successResponse, successResponseWithEmptyBody } =
-    createResponseHandler(res);
+  const { errorResponse, successResponse } = createResponseHandler(res);
 
   const validation = validationResult(req);
   if (validation.errors.length > 0) {
@@ -31,7 +29,6 @@ export const controllerWrapper = (callback) => async (req, res, next) => {
     await callback(req, res, {
       errorResponse,
       successResponse,
-      successResponseWithEmptyBody,
       sql,
     });
   } catch (error) {

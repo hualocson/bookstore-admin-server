@@ -22,7 +22,7 @@ export default {
    * API configs
    */
   api: {
-    prefixV1: "/api/v1",
+    prefixV1: "/api/admin/v1",
   },
 
   // JWT
