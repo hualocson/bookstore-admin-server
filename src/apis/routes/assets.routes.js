@@ -9,6 +9,9 @@ const assetsRoutes = (router) => {
     uploadFileMiddleware.single("image"),
     assetsController.uploadImage
   );
+
+  // get all assets
+  router.get("/assets", adminAuthorization(1), assetsController.getAllAssets);
 };
 
 export default assetsRoutes;

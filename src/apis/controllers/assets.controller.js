@@ -15,7 +15,7 @@ const assetsController = {
       }
 
       // insert to assets table
-      const newAsset = await sql`INSERT INTO public.assets
+      const [newAsset] = await sql`INSERT INTO public.assets
         (cloudinary_public_id, secure_url, file_size) VALUES (${cloudinaryPublicId}, ${secureUrl}, ${parseInt(
           size
         )}) RETURNING *`;
@@ -23,6 +23,11 @@ const assetsController = {
       successResponse({ newAsset }, "Upload image success");
     }
   ),
+
+  getAllAssets: controllerWrapper(async (_, res, { successResponse, sql }) => {
+    const assets = await sql`SELECT * FROM public.assets`;
+    successResponse({ assets }, "Get all assets success");
+  }),
 };
 
 export default assetsController;
