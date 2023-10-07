@@ -2,7 +2,7 @@ import authController from "../controllers/auth.controller";
 import { body } from "express-validator";
 
 const authRoutes = (router) => {
-  router.get("/auth", authController.getAdmin);
+  router.get("/auth", authController.getAdminData);
 
   router.post(
     "/auth/hash-password",
@@ -34,7 +34,6 @@ const authRoutes = (router) => {
     authController.loginAdmin
   );
 
-  router.post("/auth/verify", authController.verifyToken);
   router.post("/auth/logout", authController.logoutAdmin);
 };
 

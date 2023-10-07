@@ -15,6 +15,8 @@ export default (app) => {
 
   app.use(helmet());
 
+  app.enable("trust proxy");
+
   app.use(cookieParser());
   app.get("/status", (req, res) => {
     res.status(200).end();
@@ -22,14 +24,6 @@ export default (app) => {
   app.head("/status", (req, res) => {
     res.status(200).end();
   });
-
-  app.get("/", (req, res) => {
-    res
-      .status(200)
-      .send('<h1><a href="/api/v1/docs">Go to API Documents</a></h1>');
-  });
-
-  app.enable("trust proxy");
 
   app.use(cors());
 

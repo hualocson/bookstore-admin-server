@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import configs from "@/configs/vars.js";
-import logger from "@/configs/logger";
 
 export function jwtGenerator(payload) {
   return jwt.sign(payload, configs.jwtSecret, {
