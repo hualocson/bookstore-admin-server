@@ -4,16 +4,6 @@ import { jwtGenerator, verifyJwt } from "@/lib/utils/jwt.utils";
 import jwt from "jsonwebtoken";
 
 const authController = {
-  getAdmin: controllerWrapper(async (req, _, { successResponse, sql }) => {
-    const data = await sql`SELECT * FROM admin.admins`;
-    successResponse(
-      {
-        data,
-      },
-      "This is message for success response"
-    );
-  }),
-
   hashPassword: controllerWrapper(
     async (req, _, { successResponse, errorResponse, sql }) => {
       const { password, username } = req.body;
@@ -66,9 +56,10 @@ const authController = {
       const payload = { username, adminRank: admin[0].adminRank };
       const token = jwtGenerator(payload);
 
-      res.cookie("admin-auth", token, {
-        secure: false,
+      // save token to cookie
+      res.cookie("admin_auth", token, {
         httpOnly: true,
+        // secure: true, // only https
         sameSite: "strict",
       });
 
@@ -80,24 +71,20 @@ const authController = {
       );
     }
   ),
-  logoutAdmin: controllerWrapper(async (req, res, { successResponse }) => {
-    res.cookie("admin-auth", "", {
-      secure: false,
-      httpOnly: true,
-      sameSite: "strict",
-      expires: new Date(0),
-    });
+  logoutAdmin: controllerWrapper(async (_, res, { successResponse }) => {
+    // clear cookie
+    res.clearCookie("admin_auth");
 
     return successResponse({}, "Logout successful.", 200);
   }),
 
-  verifyToken: controllerWrapper(
+  getAdminData: controllerWrapper(
     async (req, _, { errorResponse, successResponse }) => {
-      const token = req.cookies["admin-auth"];
+      const token = req.cookies.admin_auth;
 
       if (!token) return errorResponse("Token not found.", 404);
 
-      const { payload, error } = verifyJwt(req.cookies["admin-auth"]);
+      const { payload, error } = verifyJwt(token);
 
       if (error) {
         if (error.name === "TokenExpiredError")
@@ -106,7 +93,11 @@ const authController = {
         return errorResponse("Token invalid.", 401);
       }
 
-      return successResponse({ payload }, "Verify token successful", 200);
+      return successResponse(
+        { payload },
+        "Retrieve admin data successful",
+        200
+      );
     }
   ),
 };

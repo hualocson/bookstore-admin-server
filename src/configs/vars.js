@@ -35,4 +35,9 @@ export default {
     apiKey: osHelpers.getOsEnv("CLOUD_API_KEY"),
     apiSecret: osHelpers.getOsEnv("CLOUD_API_SECRET"),
   },
+
+  // redis
+  redisHost: osHelpers.getOsEnv("REDIS_HOST"),
+  redisPort: osHelpers.getOsEnv("REDIS_PORT"),
+  redisPassword: osHelpers.getOsEnvOptional("REDIS_PASSWORD"),
 };

@@ -5,7 +5,7 @@ import ApiError from "@/lib/api-error";
 export default function adminAuthorization(adminRequiredRank) {
   return async (req, res, next) => {
     try {
-      const jwtToken = req.cookies["admin-auth"];
+      const jwtToken = req.cookies.admin_auth;
 
       if (!jwtToken) {
         next(new ApiError(403, "Access unauthorized. Please login."));
