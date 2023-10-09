@@ -55,7 +55,6 @@ const productsRoutes = (router) => {
   router.patch(
     "/products/:id",
     adminAuthorization(2),
-    validateImageMiddleware("image"),
     param("id").isInt().withMessage("Id must be a number"),
     body("category_id")
         .notEmpty()
