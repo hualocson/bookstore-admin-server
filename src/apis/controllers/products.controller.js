@@ -133,11 +133,11 @@ const productsController = {
         SELECT id, deleted_at FROM products WHERE id = ${id}
       `;
 
-      if (existingProduct.id == null) {
+      if (!existingProduct) {
         return errorResponse(`Product with id ${id} not found`, 404);
       }
 
-      if (existingProduct.deleted_at != null) {
+      if (existingProduct.deleted_at !== null) {
         return errorResponse(`Product with id ${id} is deleted`, 404);
       }
       const [product] = await sql`
@@ -162,14 +162,14 @@ const productsController = {
       const { id } = req.params;
 
       const [existingProduct] = await sql`
-        SELECT id deleted_at FROM products WHERE id = ${id}
+        SELECT id, deleted_at FROM products WHERE id = ${id}
       `;
 
-      if (existingProduct.id == null) {
+      if (!existingProduct) {
         return errorResponse(`Product with id ${id} not found`, 404);
       }
 
-      if (existingProduct.deleted_at == null) {
+      if (existingProduct.deleted_at === null) {
         return errorResponse(`Product with id ${id} is not deleted`, 404);
       }
 
