@@ -3,4 +3,12 @@ const CategoryStatus = {
   INACTIVE: 1002,
 };
 
-export { CategoryStatus };
+const ProductStatus = {
+  INSTOCK: 1101,
+  OUTOFSTOCK: 1102,
+  ONSALE: 1103,
+  NEWARRIVAL: 1104,
+  BESTSELLER: 1105,
+};
+
+export { CategoryStatus, ProductStatus };
