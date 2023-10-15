@@ -4,11 +4,11 @@ const CategoryStatus = {
 };
 
 const ProductStatus = {
-  INSTOCK: 1101,
-  OUTOFSTOCK: 1102,
-  ONSALE: 1103,
-  NEWARRIVAL: 1104,
-  BESTSELLER: 1105,
+  IN_STOCK: 1101,
+  OUT_OF_STOCK: 1102,
+  ON_SALE: 1103,
+  NEW_ARRIVAL: 1104,
+  BEST_SELLER: 1105,
 };
 
 export { CategoryStatus, ProductStatus };
