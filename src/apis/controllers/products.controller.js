@@ -14,7 +14,8 @@ const productsController = {
   createProduct: controllerWrapper(
     async (req, _, { errorResponse, successResponse, sql }) => {
       /** @type {ProductData} */
-      const { category_id, name, description, image, price, quantity } = req.body;
+      const { categoryId, name, description, image, price, quantity } =
+        req.body;
       let slug = slugify(name);
       let counter = 1;
       const products = await sql`
@@ -41,9 +42,9 @@ const productsController = {
         INSERT INTO products
           (category_id, name, slug, description, image, price, quantity, status)
         VALUES
-          (${category_id}, ${name}, ${slug}, ${
-            description ?? ""
-          }, ${image}, ${price ?? 0}, ${quantity ?? 0}, ${ProductStatus.INSTOCK})
+          (${categoryId}, ${name}, ${slug}, ${description ?? ""}, ${image}, ${
+            price ?? 0
+          }, ${quantity ?? 0}, ${ProductStatus.IN_STOCK})
         RETURNING id, name, slug
       `;
 
@@ -56,12 +57,39 @@ const productsController = {
   ),
 
   getAllProducts: controllerWrapper(
-    async (_, res, { errorResponse, successResponse, sql }) => {
+    async (req, _, { successResponse, sql }) => {
+      const { filter } = req.query;
+
       const products = await sql`
-        SELECT id, category_id, name, slug, description, image, price, quantity, status
-        FROM products
-        WHERE deleted_at IS NULL
-      `;
+      SELECT
+        p.id,
+        category_id,
+        p.name,
+        p.slug,
+        p.description,
+        p.image,
+        p.price,
+        p.quantity,
+        p.status,
+        p.deleted_at,
+        c.name AS category_name,
+        e.enum_name AS status_name
+      FROM
+        products p
+      LEFT JOIN categories c ON
+        p.category_id = c.id
+      LEFT JOIN enums e ON p.status = e.id
+        ${
+          filter
+            ? filter === "active"
+              ? sql`WHERE p.deleted_at IS NULL`
+              : filter === "inactive"
+              ? sql`WHERE p.deleted_at IS NOT NULL`
+              : sql``
+            : sql``
+        }
+      ORDER BY p.created_at
+    `;
 
       return successResponse(
         { products },
@@ -74,40 +102,42 @@ const productsController = {
   // upload product
   updateProduct: controllerWrapper(
     async (req, _, { errorResponse, successResponse, sql }) => {
-      const { category_id, name, description, image, price, quantity, status } = req.body;
+      const { categoryId, name, description, image, price, quantity, status } =
+        req.body;
       const { id } = req.params;
 
       // check if product with name existed
       const [existingProduct] = await sql`
-        SELECT id FROM products WHERE id = ${id} AND deleted_at IS NULL
+        SELECT id, deleted_at, status FROM products WHERE id = ${id} AND deleted_at IS NULL
       `;
 
-      if(!existingProduct){
+      if (!existingProduct) {
         return errorResponse("Product does not exist", 404);
       }
 
-      // check if product with name existed
-      // const [existingName] = await sql`
-      //   SELECT name, slug FROM products WHERE id = ${id}
-      // `;
-
-      // if (!existingName) {
-      //   return errorResponse("Product does not exist", 400);
-      // }
+      if (existingProduct.deletedAt !== null) {
+        return errorResponse("Product is inactive", 400);
+      }
 
       const [existingCategory] = await sql`
-        SELECT id FROM categories WHERE id = ${category_id}
+        SELECT id, deleted_at FROM categories WHERE id = ${categoryId}
       `;
 
       if (!existingCategory) {
-        return errorResponse(`Category with id ${category_id} not found`, 404);
+        return errorResponse(`Category with id ${categoryId} not found`, 404);
+      }
+
+      if (existingCategory.deletedAt !== null) {
+        return errorResponse(`Category with id ${categoryId} is inactive`, 400);
       }
 
       const [product] = await sql`
         UPDATE products
-        SET category_id = ${category_id} , name = ${name}, description = ${
+        SET category_id = ${categoryId} , name = ${name}, description = ${
           description ?? ""
-        }, image = ${image}, price = ${price}, quantity = ${quantity}, status = ${status}
+        }, image = ${image}, price = ${price}, quantity = ${quantity}, status = ${
+          status ?? existingProduct.status // if status is not provided, use the existing status
+        }
         WHERE id = ${id}
         RETURNING id, category_id, name, slug, description, image, price, quantity, status
       `;
@@ -137,22 +167,17 @@ const productsController = {
         return errorResponse(`Product with id ${id} not found`, 404);
       }
 
-      if (existingProduct.deleted_at !== null) {
-        return errorResponse(`Product with id ${id} is deleted`, 404);
+      if (existingProduct.deletedAt !== null) {
+        return errorResponse(`Product with id ${id} is deleted`, 400);
       }
       const [product] = await sql`
       UPDATE products
       SET deleted_at = NOW()
       WHERE id = ${id}
-      RETURNING id, category_id, name, slug, description, image, price, quantity
+      RETURNING id, name, deleted_at
       `;
 
-
-      return successResponse(
-        { product },
-        "Product deleted successfully",
-        200
-      );
+      return successResponse({ product }, "Product deleted successfully", 200);
     }
   ),
 
@@ -169,23 +194,18 @@ const productsController = {
         return errorResponse(`Product with id ${id} not found`, 404);
       }
 
-      if (existingProduct.deleted_at === null) {
-        return errorResponse(`Product with id ${id} is not deleted`, 404);
+      if (existingProduct.deletedAt === null) {
+        return errorResponse(`Product with id ${id} is not deleted`, 400);
       }
 
       const [product] = await sql`
       UPDATE products
       SET deleted_at = NULL
       WHERE id = ${id}
-      RETURNING id, category_id, name, slug, description, image, price, quantity
+      RETURNING id, name, deleted_at
       `;
 
-
-      return successResponse(
-        { product },
-        "Restore Product successfully",
-        200
-      );
+      return successResponse({ product }, "Restore Product successfully", 200);
     }
   ),
 };
