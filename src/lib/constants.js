@@ -2,7 +2,12 @@ const CategoryStatus = {
   ACTIVE: 1001,
   INACTIVE: 1002,
 };
-
+const OrderStatus = {
+  PENDING: 1301,
+  PROCESSED: 1302,
+  DELIVERED: 1303,
+  CANCELED: 1304,
+};
 const ProductStatus = {
   IN_STOCK: 1101,
   OUT_OF_STOCK: 1102,
@@ -10,5 +15,15 @@ const ProductStatus = {
   NEW_ARRIVAL: 1104,
   BEST_SELLER: 1105,
 };
+const CouponStatus = {
+  ACTIVE: 1203,
+  EXPIRED: 1204,
+  DISABLES: 1205
+};
+const CouponType = {
+  PERCENT: 1201,
+  FIXED_AMOUNT: 1202
+}
 
-export { CategoryStatus, ProductStatus };
+export { CategoryStatus, OrderStatus, ProductStatus,CouponStatus,CouponType };
+
