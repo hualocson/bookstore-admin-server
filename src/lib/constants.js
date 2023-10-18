@@ -11,4 +11,10 @@ const ProductStatus = {
   BEST_SELLER: 1105,
 };
 
-export { CategoryStatus, ProductStatus };
+const CustomerStatus = {
+  PENDING: 1401,
+  ACTIVE: 1402,
+  INACTIVE: 1403,
+}
+
+export { CategoryStatus, ProductStatus, CustomerStatus };
