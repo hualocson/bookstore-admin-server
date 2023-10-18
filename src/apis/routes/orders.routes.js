@@ -1,6 +1,4 @@
-//Write orders.routes.js base on categories.routes.js
-//Import
-import { body,query, param } from "express-validator";
+import { body, param } from "express-validator";
 import ordersController from "../controllers/orders.controller";
 import adminAuthorization from "../middlewares/auth";
 /**
@@ -8,86 +6,81 @@ import adminAuthorization from "../middlewares/auth";
  * @param {import('express').Router} router
  */
 
-const ordersRoutes = (router) =>
-{
-    //create new order with customerId,status,shippingFee,total,couponId
-    router.post(
-        "/create-order",
-        adminAuthorization(2),
-        body("customerId").isInt().withMessage("Customer id must be a number"),
-        body("adressId").isInt().withMessage("Adress id must be a number"),
-        body("shippingFee").isInt().withMessage("Shipping fee must be a number"),
-        body("couponType").isInt().withMessage("CouponType id must be a number"),
-        ordersController.createOrder
-    );
-    //Get all orders
-    router.get(
-        "/orders",
-        adminAuthorization(1),
-        ordersController.getAllOrders
-    );
-    //Get order by id
-    router.get(
-        "/orders/:id",
-        adminAuthorization(1),
-        param("id").isInt().withMessage("Id must be a number"),
-        ordersController.getOrderById
-    );
-    //Get all orders by customerId
-    router.get(
-        "/orders/customer/:customerId",
-        adminAuthorization(1),
-        param("customerId").isInt().withMessage("Id must be a number"),
-        ordersController.getAllOrdersByCustomerId
-    );
-    
-    //Get orders by status from req.params, status is a number
-    router.get(
-        "/orders/status/:status",
-        adminAuthorization(1),
-        param("status").isInt().withMessage("Status must be a number"),
-        ordersController.getOrdersByStatus
-    );
-    //Get orders by both customerId and status in query not params
-    router.get(
-        "/orders/customer/:customerId/status/:status",
-        adminAuthorization(1),
-        param("customerId").isInt().withMessage("Id must be a number"),
-        param("status").isInt().withMessage("Status must be a number"),
-        ordersController.getOrdersByCustomerIdAndStatus
-    );
-    
-    //Update only status of order
-    router.patch(
-        "/orders/update-status/:id",
-        adminAuthorization(2),
-        param("id").isInt().withMessage("Id must be a number"),
-        body("status").isInt().withMessage("Status must be a number"),
-        ordersController.updateOrder
-    );
+const ordersRoutes = (router) => {
+  // create new order with customerId,status,shippingFee,total,couponId
+  router.post(
+    "/create-order",
+    adminAuthorization(2),
+    body("customerId").isInt().withMessage("Customer id must be a number"),
+    body("adressId").isInt().withMessage("Adress id must be a number"),
+    body("shippingFee").isInt().withMessage("Shipping fee must be a number"),
+    body("couponType").isInt().withMessage("CouponType id must be a number"),
+    ordersController.createOrder
+  );
+  // Get all orders
+  router.get("/orders", adminAuthorization(1), ordersController.getAllOrders);
+  // Get order by id
+  router.get(
+    "/orders/:id",
+    adminAuthorization(1),
+    param("id").isInt().withMessage("Id must be a number"),
+    ordersController.getOrderById
+  );
+  // Get all orders by customerId
+  router.get(
+    "/orders/customer/:customerId",
+    adminAuthorization(1),
+    param("customerId").isInt().withMessage("Id must be a number"),
+    ordersController.getAllOrdersByCustomerId
+  );
 
-    //View Order detail by Trả về thông tin chi tiết của đơn hàng, bao gồm sản phẩm, số lượng, giá tiền, địa chỉ giao hàng, và trạng thái đơn hàng.
-    router.get(
-        "/orders/detail/:id",
-        adminAuthorization(1),
-        param("id").isInt().withMessage("Id must be a number"),
-        ordersController.viewOrderDetail
-    );
-    
-    //get Revenue of all orders
-    router.get(
-        "/totalRevenue",
-        adminAuthorization(1),
-        ordersController.getTotalRevenue
-    );
-    
-    //Get revenue of orders by customerId
-    router.get(
-        "/orders/revenue/:customerId",
-        adminAuthorization(1),
-        param("customerId").isInt().withMessage("Id must be a number"),
-        ordersController.getRevenueByCustomerId
-    );
-}
-//Export
+  // Get orders by status from req.params, status is a number
+  router.get(
+    "/orders/status/:status",
+    adminAuthorization(1),
+    param("status").isInt().withMessage("Status must be a number"),
+    ordersController.getOrdersByStatus
+  );
+  // Get orders by both customerId and status in query not params
+  router.get(
+    "/orders/customer/:customerId/status/:status",
+    adminAuthorization(1),
+    param("customerId").isInt().withMessage("Id must be a number"),
+    param("status").isInt().withMessage("Status must be a number"),
+    ordersController.getOrdersByCustomerIdAndStatus
+  );
+
+  // Update only status of order
+  router.patch(
+    "/orders/update-status/:id",
+    adminAuthorization(2),
+    param("id").isInt().withMessage("Id must be a number"),
+    body("status").isInt().withMessage("Status must be a number"),
+    ordersController.updateOrder
+  );
+
+  // View Order detail by Trả về thông tin chi tiết của đơn hàng, bao gồm sản phẩm, số lượng, giá tiền, địa chỉ giao hàng, và trạng thái đơn hàng.
+  router.get(
+    "/orders/detail/:id",
+    adminAuthorization(1),
+    param("id").isInt().withMessage("Id must be a number"),
+    ordersController.viewOrderDetail
+  );
+
+  // get Revenue of all orders
+  router.get(
+    "/totalRevenue",
+    adminAuthorization(1),
+    ordersController.getTotalRevenue
+  );
+
+  // Get revenue of orders by customerId
+  router.get(
+    "/orders/revenue/:customerId",
+    adminAuthorization(1),
+    param("customerId").isInt().withMessage("Id must be a number"),
+    ordersController.getRevenueByCustomerId
+  );
+};
+// Export
 export default ordersRoutes;
