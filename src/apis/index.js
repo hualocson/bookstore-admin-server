@@ -3,7 +3,7 @@ import authRoutes from "./routes/auth.routes";
 import assetsRoutes from "./routes/assets.routes";
 import categoriesRoutes from "./routes/categories.routes";
 import productsRoutes from "./routes/products.routes";
-
+import addressesRoutes from "./routes/addresses.routes";
 
 // guaranteed to get dependencies
 export default () => {
@@ -12,5 +12,6 @@ export default () => {
   assetsRoutes(app);
   categoriesRoutes(app);
   productsRoutes(app);
+  addressesRoutes(app);
   return app;
 };
