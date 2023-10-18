@@ -1,4 +1,3 @@
-import { body, param } from "express-validator";
 import addressesController from "../controllers/addresses.controller";
 import adminAuthorization from "../middlewares/auth";
 /**
@@ -7,12 +6,11 @@ import adminAuthorization from "../middlewares/auth";
  */
 
 const addressesRoutes = (router) => {
-    router.get(
-      "/addresses",
-      adminAuthorization(1),
-      addressesController.getAllAddresses
-    );
-    
+  router.get(
+    "/addresses",
+    adminAuthorization(1),
+    addressesController.getAllAddresses
+  );
 };
-  
-  export default addressesRoutes;
+
+export default addressesRoutes;
