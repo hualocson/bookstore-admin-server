@@ -12,7 +12,7 @@ const ordersController =
     //Create new order
     createOrder: controllerWrapper(
         async(req, res, {errorResponse, successResponse, sql, redis}) => {
-            const {customerId,adressId, shippingFee, couponType } = req.body;
+            const {customerId, addressId, shippingFee, couponType } = req.body;
             
             // Check if customer exists
             const [customer] = await sql`
@@ -24,10 +24,10 @@ const ordersController =
 
             // Check if address exists
             const [address] = await sql`
-                SELECT id FROM addresses WHERE id = ${adressId}
+                SELECT id FROM addresses WHERE id = ${addressId}
             `;
             if (!address) {
-                return errorResponse(`Address with id ${adressId} not found`, 404);
+                return errorResponse(`Address with id ${addressId} not found`, 404);
             }
 
             // Check if coupon exists
@@ -41,7 +41,7 @@ const ordersController =
             // Create new empty order
             const [newOrder] = await sql`
                 INSERT INTO orders (customer_id, status, shipping_fee, total, address_id, coupon_id)
-                VALUES (${customerId}, ${OrderStatus.PENDING}, ${shippingFee}, 0, ${adressId}, ${couponType ? coupon.id : null})
+                VALUES (${customerId}, ${OrderStatus.PENDING}, ${shippingFee}, 0, ${addressId}, ${couponType ? coupon.id : null})
                 RETURNING id,customer_id, status, shipping_fee, address_id, coupon_id
             `;
 
@@ -136,19 +136,16 @@ const ordersController =
         {
             const {id} = req.params;
             //Check if order existed
-            const [order] = await sql`
-                SELECT id FROM orders WHERE id = ${id}
-            `;
-            if(!order)
-            {
-                return errorResponse(`Order with id ${id} not found`,404);
-            }
-            //Get all attributes of an order by id
             const [orderById] = await sql`
                 SELECT id,customer_id,status,shipping_fee,total,coupon_id,created_at,updated_at,deleted_at,canceled_at,completed_at, delivery_at
                 FROM orders
                 WHERE id = ${id}
             `;
+            if(!orderById)
+            {
+                return errorResponse(`Order with id ${id} not found`,404);
+            }
+            //Get all attributes of order by id
             return successResponse(
                 {orderById},
                 "Get order by id successfully",
@@ -162,83 +159,20 @@ const ordersController =
         {
             const {customerId} = req.params;
             //Check if customerId existed
-            const [customer] = await sql`
-                SELECT id FROM customers WHERE id = ${customerId}
-            `;
-            if(!customer)
-            {
-                return errorResponse(`Customer with id ${customerId} not found`,404);
-            }
-            //Get all attribute of orders by customerId
             const orders = await sql`
                 SELECT id,customer_id,status,shipping_fee,total,coupon_id,created_at,updated_at,deleted_at,canceled_at,completed_at, delivery_at
                 FROM orders
                 WHERE customer_id = ${customerId}
             `;
+            if(!orders)
+            {
+                return errorResponse(`Orders with customerId ${customerId} not found`,404);
+            }
+            //Get all attribute of orders by customerId
             return successResponse(
             {orders},
             "Get all orders by customerId successfully",
             200
-            );
-        }
-    ),
-    //Get orders by status from req.params
-    getOrdersByStatus: controllerWrapper(
-        async(req,_,{errorResponse,successResponse,sql})=>
-        {
-            const {status} = req.params;
-            //Check if status is valid
-            const [statusEnum] = await sql`
-                SELECT enum_value FROM enums WHERE enum_value = ${status}
-            `;
-            if(!statusEnum)
-            {
-                return errorResponse(`Status ${status} is invalid`,400);
-            }
-            //Get all attributes of orders by status
-            const orders = await sql`
-                SELECT id,customer_id,status,shipping_fee,total,coupon_id,created_at,updated_at,deleted_at,canceled_at,completed_at, delivery_at
-                FROM orders
-                WHERE status = ${status}
-            `;
-            return successResponse(
-                {orders},
-                "Get orders by status successfully",
-                200
-            );
-        }
-    ),
-    //Get orders by customerId and status
-    getOrdersByCustomerIdAndStatus: controllerWrapper(
-        async(req,_,{errorResponse,successResponse,sql})=>
-        {
-            const {customerId,status} = req.params;
-            //Check if customerId existed
-            const [customer] = await sql`
-                SELECT id FROM customers WHERE id = ${customerId}
-            `;
-            if(!customer)
-            {
-                return errorResponse(`Customer with id ${customerId} not found`,404);
-            }
-            //Check if status is valid
-            const [statusEnum] = await sql`
-                SELECT enum_value FROM enums WHERE enum_value = ${status}
-            `;
-            if(!statusEnum)
-            {
-                return errorResponse(`Status ${status} is invalid`,400);
-            }
-            //Get all attributes of orders by customerId and status
-            const orders = await sql`
-                SELECT id,customer_id,status,shipping_fee,total,coupon_id,created_at,updated_at,deleted_at,canceled_at,completed_at, delivery_at
-                FROM orders
-                WHERE customer_id = ${customerId} AND status = ${status}
-            `;
-            return successResponse(
-                {orders},
-                "Get orders by customerId and status successfully",
-                200
             );
         }
     ),
@@ -256,7 +190,7 @@ const ordersController =
             {
                 return errorResponse(`Order with id ${id} not found`,404);
             }
-            //Check if status existed
+            //Check if status existed by validator in routes
             const [statusEnum] = await sql`
                 SELECT enum_value FROM enums WHERE enum_value = ${status}
             `;
