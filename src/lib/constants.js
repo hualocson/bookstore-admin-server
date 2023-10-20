@@ -18,12 +18,11 @@ const ProductStatus = {
 const CouponStatus = {
   ACTIVE: 1203,
   EXPIRED: 1204,
-  DISABLES: 1205
+  DISABLES: 1205,
 };
 const CouponType = {
   PERCENT: 1201,
-  FIXED_AMOUNT: 1202
-}
+  FIXED_AMOUNT: 1202,
+};
 
-export { CategoryStatus, OrderStatus, ProductStatus,CouponStatus,CouponType };
-
+export { CategoryStatus, OrderStatus, ProductStatus, CouponStatus, CouponType };
