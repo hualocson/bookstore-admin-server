@@ -5,6 +5,8 @@ import categoriesRoutes from "./routes/categories.routes";
 import productsRoutes from "./routes/products.routes";
 import ordersRoutes from "./routes/orders.routes";
 import orderItemsRoutes from "./routes/orderItems.routes";
+import addressesRoutes from "./routes/addresses.routes";
+
 // guaranteed to get dependencies
 export default () => {
   const app = Router();
@@ -14,5 +16,6 @@ export default () => {
   productsRoutes(app);
   ordersRoutes(app);
   orderItemsRoutes(app);
+  addressesRoutes(app);
   return app;
 };
