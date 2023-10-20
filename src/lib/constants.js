@@ -25,4 +25,17 @@ const CouponType = {
   FIXED_AMOUNT: 1202,
 };
 
-export { CategoryStatus, OrderStatus, ProductStatus, CouponStatus, CouponType };
+const CustomerStatus = {
+  PENDING: 1401,
+  ACTIVE: 1402,
+  INACTIVE: 1403,
+};
+
+export {
+  CategoryStatus,
+  OrderStatus,
+  ProductStatus,
+  CouponStatus,
+  CouponType,
+  CustomerStatus,
+};
