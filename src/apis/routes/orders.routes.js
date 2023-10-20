@@ -46,7 +46,11 @@ const ordersRoutes = (router) =>
         "/orders/:id/status",
         adminAuthorization(2),
         param("id").isInt().withMessage("Id must be a number"),
-        body("status").isInt().withMessage("Status must be a number"),
+        body("status")
+            .isInt()
+            .withMessage("Status must be a number")
+            .isIn(1301,1302,1303,1304)
+            .withMessage("Status must be a valid value"),
         ordersController.updateOrder
     );
 

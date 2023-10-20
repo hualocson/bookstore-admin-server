@@ -190,14 +190,7 @@ const ordersController =
             {
                 return errorResponse(`Order with id ${id} not found`,404);
             }
-            //Check if status existed by validator in routes
-            const [statusEnum] = await sql`
-                SELECT enum_value FROM enums WHERE enum_value = ${status}
-            `;
-            if(!statusEnum)
-            {
-                return errorResponse(`Status ${status} is invalid`,400);
-            }
+
             //Update order
             const [updatedOrder] = await sql`
                 UPDATE orders
