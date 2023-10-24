@@ -1,6 +1,8 @@
 import { body, param } from "express-validator";
 import adminAuthorization from "../middlewares/auth";
 import couponsController from "../controllers/coupons.controller";
+import { CouponStatus } from "@/lib/constants";
+import { CouponType } from "@/lib/constants";
 // INSERT INTO public.coupons
 // (id, coupon_code, coupon_type, coupon_value, coupon_start_date, coupon_end_date, coupon_min_spend, coupon_max_spend, coupon_uses_per_customer, coupon_uses_per_coupon, coupon_status, created_at, updated_at, deleted_at)
 // VALUES(nextval('coupons_id_seq'::regclass), '', 0, 0, '', '', 0, 0, 0, 0, 0, now(), now(), '');
@@ -17,7 +19,9 @@ const couponsRoutes = (router) => {
             .notEmpty()
             .withMessage("Coupon type is required")
             .isInt()
-            .withMessage("Coupon type must be a number"),
+            .withMessage("Coupon type must be a number")
+            .isIn(Object.values(CouponType))
+            .withMessage("Coupon type must be in valid range"),
         body("couponValue")
             .notEmpty()
             .withMessage("Coupon value is required")
@@ -57,7 +61,9 @@ const couponsRoutes = (router) => {
             .notEmpty()
             .withMessage("Coupon status is required")
             .isInt()
-            .withMessage("Coupon status must be a number"),
+            .withMessage("Coupon status must be a number")
+            .isIn(Object.values(CouponStatus))
+            .withMessage("Coupon status must be in valid range"),
         couponsController.createCoupon
     );
     router.get(
@@ -66,18 +72,25 @@ const couponsRoutes = (router) => {
         couponsController.getAllCoupons
     );
     router.get(
-        "/coupons/:couponCode",
+        "/coupons/:id",
         adminAuthorization(2),
-        couponsController.getCouponByCouponCode
+        couponsController.getCouponById
     );
     router.patch(
-        "/coupons/:couponCode",
+        "/coupons/:id",
         adminAuthorization(2),
+        body("couponCode")
+            .notEmpty()
+            .withMessage("Coupon code is required")
+            .isString()
+            .withMessage("Coupon code must be a number"),
         body("couponType")
             .notEmpty()
             .withMessage("Coupon type is required")
             .isInt()
-            .withMessage("Coupon type must be a number"),
+            .withMessage("Coupon type must be a number")
+            .isIn(Object.values(CouponType))
+            .withMessage("Coupon type must be in valid range"),
         body("couponValue")
             .notEmpty()
             .withMessage("Coupon value is required")
@@ -117,13 +130,10 @@ const couponsRoutes = (router) => {
             .notEmpty()
             .withMessage("Coupon status is required")
             .isInt()
-            .withMessage("Coupon status must be a number"),
+            .withMessage("Coupon status must be a number")
+            .isIn(Object.values(CouponStatus))
+            .withMessage("Coupon status must be in valid range"),
         couponsController.updateCoupon
-    );
-    router.patch(
-        "/coupons/disable/:couponCode",
-        adminAuthorization(2),
-        couponsController.disabledCoupon
     );
 }
 
