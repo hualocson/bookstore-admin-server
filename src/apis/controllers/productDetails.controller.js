@@ -89,15 +89,20 @@ const productDetailsController = {
     
     //Update productDetails
     updateProductDetails: controllerWrapper(
-        async (req, _, { successResponse, sql }) => {
+        async (req, _, { errorResponse,successResponse, sql }) => {
             const { pages, author, publisher, publicationDate } = req.body;
             const { id } = req.params;
             //Check if product id is exist
             const [product] = await sql`
-            SELECT id FROM products WHERE id = ${id}
+            SELECT id,deleted_at,status FROM products WHERE id = ${id}
             `;
             if (!product) {
                 return errorResponse(`Product with id ${id} not found`, 404);
+            }
+            const [existingProductDetails] = await sql`SELECT id,pages,author FROM product_details WHERE id = ${id}
+            `;
+            if (!existingProductDetails) {
+                return errorResponse(`Product details with product id ${id} not found`, 404);
             }
             const [productDetails] = await sql`
             UPDATE product_details
