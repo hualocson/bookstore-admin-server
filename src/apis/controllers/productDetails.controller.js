@@ -4,13 +4,21 @@ import { controllerWrapper } from "@/lib/controller.wrapper";
 const productDetailsController = {
     //create productDetails
     createProductDetails: controllerWrapper(
-        async (req, _, { successResponse, sql }) => {
-            const { pages, author, publisher, publicationDate } = req.body;
+        async (req, _, {errorResponse, successResponse, sql }) => {
+            const {id ,pages, author, publisher, publicationDate } = req.body;
+            //Check if product id is exist
+            const [product] = await sql`
+            SELECT id FROM products WHERE id = ${id}
+            `;
+            if (!product) {
+                return errorResponse(`Product with id ${id} not found`, 404);
+            }
+            //create new productDetails
             const [newProductDetails] = await sql`
             INSERT INTO product_details
-            (pages, author, publisher, publication_date)
+            (id,pages, author, publisher, publication_date)
             VALUES
-            (${pages}, ${author}, ${publisher}, ${publicationDate})
+            (${id},${pages}, ${author}, ${publisher}, ${publicationDate})
             RETURNING id, pages, author, publisher, publication_date
             `;
             return successResponse(
@@ -50,7 +58,13 @@ const productDetailsController = {
     getProductDetailsById: controllerWrapper(
         async (req, _, { successResponse, sql }) => {
             const { id } = req.params;
-
+            //Check if product id is exist
+            const [product] = await sql`
+            SELECT id FROM products WHERE id = ${id}
+            `;
+            if (!product) {
+                return errorResponse(`Product with id ${id} not found`, 404);
+            }
             const [productDetails] = await sql`
             SELECT
                 pd.id,
@@ -78,7 +92,13 @@ const productDetailsController = {
         async (req, _, { successResponse, sql }) => {
             const { pages, author, publisher, publicationDate } = req.body;
             const { id } = req.params;
-
+            //Check if product id is exist
+            const [product] = await sql`
+            SELECT id FROM products WHERE id = ${id}
+            `;
+            if (!product) {
+                return errorResponse(`Product with id ${id} not found`, 404);
+            }
             const [productDetails] = await sql`
             UPDATE product_details
             SET
@@ -101,7 +121,13 @@ const productDetailsController = {
     deleteProductDetails: controllerWrapper(
         async (req, _, { successResponse, sql }) => {
             const { id } = req.params;
-
+            //Check if product id is exist
+            const [product] = await sql`
+            SELECT id FROM products WHERE id = ${id}
+            `;
+            if (!product) {
+                return errorResponse(`Product with id ${id} not found`, 404);
+            }
             const [productDetails] = await sql`
             DELETE FROM product_details
             WHERE id = ${id}

@@ -6,6 +6,11 @@ const productDetailsRoutes = (router) =>
     //create productDetails
     router.post(
         "/productDetails",
+        body("id")
+            .notEmpty()
+            .withMessage("Product id is required")
+            .isInt()
+            .withMessage("Product id must be a number"),
         body("pages")
             .notEmpty()
             .withMessage("Pages is required")
