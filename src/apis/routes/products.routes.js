@@ -109,7 +109,7 @@ const productsRoutes = (router) => {
     "/products/:id/restore",
     adminAuthorization(2),
     param("id").isInt().withMessage("Id must be a number"),
-    productsController.resStoreProduct
+    productsController.restoreProduct
   );
 };
 

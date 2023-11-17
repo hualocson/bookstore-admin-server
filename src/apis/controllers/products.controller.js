@@ -73,9 +73,14 @@ const productsController = {
         p.status,
         p.deleted_at,
         c.name AS category_name,
+        pd.author,
+        pd.publisher,
+        pd.publication_date,
+        pd.pages,
         e.enum_name AS status_name
       FROM
         products p
+      LEFT JOIN product_details pd ON p.id = pd.id
       LEFT JOIN categories c ON
         p.category_id = c.id
       LEFT JOIN enums e ON p.status = e.id
@@ -182,7 +187,7 @@ const productsController = {
   ),
 
   // SetDelete Product
-  resStoreProduct: controllerWrapper(
+  restoreProduct: controllerWrapper(
     async (req, _, { errorResponse, successResponse, sql }) => {
       const { id } = req.params;
 

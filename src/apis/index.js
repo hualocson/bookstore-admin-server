@@ -8,6 +8,7 @@ import orderItemsRoutes from "./routes/orderItems.routes";
 import addressesRoutes from "./routes/addresses.routes";
 import customersRoutes from "./routes/customers.routes";
 import couponsRoutes from "./routes/coupons.routes";
+import productDetailsRoutes from "./routes/productDetails.routes";
 
 // guaranteed to get dependencies
 export default () => {
@@ -16,6 +17,7 @@ export default () => {
   assetsRoutes(app);
   categoriesRoutes(app);
   productsRoutes(app);
+  productDetailsRoutes(app);
   ordersRoutes(app);
   orderItemsRoutes(app);
   addressesRoutes(app);
