@@ -1,152 +1,35 @@
-import { controllerWrapper } from "@/lib/controller.wrapper";
 import { OrderStatus } from "@/lib/constants";
-const cartData = [
-  { customerId: 1, productId: 22, quantity: 3 },
-  { customerId: 1, productId: 23, quantity: 2 },
-  { customerId: 1, productId: 24, quantity: 1 },
-];
-
+import { controllerWrapper } from "@/lib/controller.wrapper";
 const ordersController = {
-  // Create new order
-  createOrder: controllerWrapper(
-    async (req, res, { errorResponse, successResponse, sql }) => {
-      const { customerId, addressId, shippingFee, couponType } = req.body;
-
-      //  Check if customer exists
-      const [customer] = await sql`
-                SELECT id FROM customers WHERE id = ${customerId}
-            `;
-      if (!customer) {
-        return errorResponse(`Customer with id ${customerId} not found`, 404);
-      }
-
-      //  Check if address exists
-      const [address] = await sql`
-                SELECT id FROM addresses WHERE id = ${addressId}
-            `;
-      if (!address) {
-        return errorResponse(`Address with id ${addressId} not found`, 404);
-      }
-
-      //  Check if coupon exists
-      const [coupon] = await sql`
-                SELECT id FROM coupons WHERE coupon_type = ${couponType}
-            `;
-      if (couponType && !coupon) {
-        return errorResponse(`Coupon with code ${couponType} not found`, 404);
-      }
-
-      //  Create new empty order
-      const [newOrder] = await sql`
-                INSERT INTO orders (customer_id, status, shipping_fee, total, address_id, coupon_id)
-                VALUES (${customerId}, ${
-                  OrderStatus.PENDING
-                }, ${shippingFee}, 0, ${addressId}, ${
-                  couponType ? coupon.id : null
-                })
-                RETURNING id,customer_id, status, shipping_fee, address_id, coupon_id
-            `;
-
-      //  Create order items from cartData and new empty order ID
-      const orderItems = cartData.map((item) => {
-        return {
-          orderId: newOrder.id,
-          productId: item.productId,
-          quantity: item.quantity,
-        };
-      });
-
-      //  Create order items
-      await Promise.all(
-        orderItems.map(async (item) => {
-          const { orderId, productId, quantity } = item;
-          const [product] = await sql`
-                        SELECT name, price
-                        FROM products
-                        WHERE id = ${productId}
-                    `;
-          //  Check if product exists
-          if (!product) {
-            return errorResponse(`Product with id ${productId} not found`, 404);
-          }
-          //  Create order item
-          const [orderItem] = await sql`
-                        INSERT INTO order_items (order_id, product_id, product_name, quantity, price)
-                        VALUES (${orderId}, ${productId}, ${product.name}, ${quantity}, ${product.price})
-                        RETURNING order_id, product_id, product_name, quantity, price
-                    `;
-
-          //  Update total price of order
-          await sql`
-                        UPDATE orders
-                        SET total = total + ${
-                          orderItem.price * orderItem.quantity
-                        }
-                        WHERE id = ${orderId}
-                    `;
-        })
-      );
-
-      // Update quantity of product after create order items
-      await Promise.all(
-        orderItems.map(async (item) => {
-          const { productId: temporaryProductId, quantity } = item;
-          const [product] = await sql`
-                        SELECT id, quantity
-                        FROM products
-                        WHERE id = ${temporaryProductId}
-                    `;
-          //  Check if product exists
-          if (!product) {
-            return errorResponse(
-              `Product with id ${temporaryProductId} not found`,
-              404
-            );
-          }
-          //  Update quantity of product
-          await sql`
-                        UPDATE products
-                        SET quantity = quantity - ${quantity}
-                        WHERE id = ${temporaryProductId}
-                    `;
-        })
-      );
-
-      //  Return new order
-      return successResponse(
-        { newOrder },
-        "Create new order successfully",
-        201
-      );
-    }
-  ),
   // Get all orders
-  getAllOrders: controllerWrapper(
-    async (_, res, { errorResponse, successResponse, sql }) => {
-      // get all attributes of an order
-      const orders = await sql`
-                SELECT id,customer_id,status,shipping_fee,total,coupon_id,created_at,updated_at,deleted_at,canceled_at,completed_at, delivery_at
-                FROM orders
-            `;
-      return successResponse({ orders }, "Get all orders successfully", 200);
-    }
-  ),
+  getAllOrders: controllerWrapper(async (_, res, { successResponse, sql }) => {
+    const orders = await sql`
+    SELECT orders.id, orders.status, orders.shipping_fee, orders.coupon_id, orders.total, orders.created_at,
+    cd.first_name, cd.last_name, c.email
+    FROM orders
+    LEFT JOIN customers c ON orders.customer_id = c.id
+    LEFT JOIN customer_details cd ON orders.customer_id = cd.id
+    ORDER BY orders.created_at ASC
+  `;
+
+    return successResponse({ orders }, "Get all orders", 200);
+  }),
   // Get order by id
   getOrderById: controllerWrapper(
     async (req, _, { errorResponse, successResponse, sql }) => {
       const { id } = req.params;
-      // Check if order existed
-      const [orderById] = await sql`
-                SELECT id,customer_id,status,shipping_fee,total,coupon_id,created_at,updated_at,deleted_at,canceled_at,completed_at, delivery_at
-                FROM orders
-                WHERE id = ${id}
-            `;
-      if (!orderById) {
-        return errorResponse(`Order with id ${id} not found`, 404);
-      }
+      const orderItems = await sql`
+        SELECT order_items.id, order_items.product_id, order_items.order_id, p.name, p.image, p.slug, pd.author, order_items.quantity, order_items.price, o.canceled_at, o.completed_at, o.delivery_at
+        FROM order_items
+        LEFT JOIN orders o ON order_items.order_id = o.id
+        LEFT JOIN products p ON order_items.product_id = p.id
+        LEFT JOIN product_details pd ON p.id = pd.id
+        WHERE order_items.order_id = ${id}
+      `;
+
       // Get all attributes of order by id
       return successResponse(
-        { orderById },
+        { orderItems },
         "Get order by id successfully",
         200
       );
@@ -189,12 +72,30 @@ const ordersController = {
         return errorResponse(`Order with id ${id} not found`, 404);
       }
 
+      let column = "";
+      switch (status) {
+        case OrderStatus.PENDING:
+          break;
+        case OrderStatus.PROCESSED:
+          column = "completed_at";
+          break;
+        case OrderStatus.DELIVERED:
+          column = "delivery_at";
+          break;
+        case OrderStatus.CANCELED:
+          column = "canceled_at";
+          break;
+        default:
+          return errorResponse("Invalid order status", 400);
+      }
+
       // Update order
       const [updatedOrder] = await sql`
                 UPDATE orders
-                SET status = ${status}
+                SET status = ${status},
+                ${column !== "" ? sql`${sql(column)} = NOW()` : sql``}
                 WHERE id = ${id}
-                RETURNING id,customer_id,status,shipping_fee,total,coupon_id
+                RETURNING id
             `;
       return successResponse(
         { updatedOrder },
@@ -203,7 +104,6 @@ const ordersController = {
       );
     }
   ),
-  // View Order detail by Trả về thông tin chi tiết của đơn hàng, bao gồm sản phẩm, số lượng, giá tiền, địa chỉ giao hàng, và trạng thái đơn hàng.
   viewOrderDetail: controllerWrapper(
     async (req, _, { errorResponse, successResponse, sql }) => {
       const { id } = req.params;
