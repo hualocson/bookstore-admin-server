@@ -1,10 +1,12 @@
 import { body, param } from "express-validator";
 import productDetailsController from "../controllers/productDetails.controller";
+import adminAuthorization from "../middlewares/auth";
 
 const productDetailsRoutes = (router) => {
   // create productDetails
   router.post(
     "/product-details",
+    adminAuthorization(2),
     body("id")
       .notEmpty()
       .withMessage("Product id is required")
@@ -27,9 +29,7 @@ const productDetailsRoutes = (router) => {
       .withMessage("Publisher must be a string"),
     body("publicationDate")
       .notEmpty()
-      .withMessage("Publication date is required")
-      .isDate()
-      .withMessage("Publication date must be a date"),
+      .withMessage("Publication date is required"),
     productDetailsController.createProductDetails
   );
   //  getAllProductDetails

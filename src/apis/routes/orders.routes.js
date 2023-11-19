@@ -8,16 +8,6 @@ import { OrderStatus } from "@/lib/constants";
  */
 
 const ordersRoutes = (router) => {
-  // create new order with customerId,status,shippingFee,total,couponId
-  router.post(
-    "/orders",
-    adminAuthorization(2),
-    body("customerId").isInt().withMessage("Customer id must be a number"),
-    body("addressId").isInt().withMessage("Address id must be a number"),
-    body("shippingFee").isInt().withMessage("Shipping fee must be a number"),
-    body("couponType").isInt().withMessage("CouponType id must be a number"),
-    ordersController.createOrder
-  );
   // Get all orders
   router.get("/orders", adminAuthorization(1), ordersController.getAllOrders);
   // Get order by id
@@ -63,12 +53,11 @@ const ordersRoutes = (router) => {
     ordersController.getTotalRevenue
   );
 
-  // Get revenue of orders by customerId
+  // get orderStats today
   router.get(
-    "/orders/revenue/:customerId",
+    "/orders/stats/today",
     adminAuthorization(1),
-    param("customerId").isInt().withMessage("Id must be a number"),
-    ordersController.getRevenueByCustomerId
+    ordersController.getOrderStatsToday
   );
 };
 export default ordersRoutes;
