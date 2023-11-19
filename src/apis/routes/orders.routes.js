@@ -53,12 +53,11 @@ const ordersRoutes = (router) => {
     ordersController.getTotalRevenue
   );
 
-  // Get revenue of orders by customerId
+  // get orderStats today
   router.get(
-    "/orders/revenue/:customerId",
+    "/orders/stats/today",
     adminAuthorization(1),
-    param("customerId").isInt().withMessage("Id must be a number"),
-    ordersController.getRevenueByCustomerId
+    ordersController.getOrderStatsToday
   );
 };
 export default ordersRoutes;

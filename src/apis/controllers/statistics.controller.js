@@ -1,6 +1,69 @@
 import { controllerWrapper } from "@/lib/controller.wrapper";
 
 const statisticsController = {
+  // get store stats
+  getStats: controllerWrapper(async (_, res, { successResponse, sql }) => {
+    const [totalCustomers] = await sql`
+            SELECT COUNT(id) as total
+            FROM customers
+            WHERE deleted_at IS NULL
+        `;
+
+    const [totalOrders] = await sql`
+            SELECT COUNT(id) as total
+            FROM orders
+            WHERE deleted_at IS NULL
+        `;
+    const [totalRevenue] = await sql`
+            SELECT SUM(total) as total
+            FROM orders
+            WHERE deleted_at IS NULL
+        `;
+
+    // get top selling products
+    const topSellingProducts = await sql`
+          SELECT
+            p.id,
+            p.name,
+            p.image,
+            p.category_id,
+            p.status,
+            p.price,
+            q.total_sold,
+            c.name AS category_name,
+            (q.total_sold * p.price) AS total_sales
+          FROM
+          (
+            SELECT
+              p.id,
+              sum(p.sold) AS total_sold
+            FROM
+              products p
+            WHERE p.sold > 0 AND p.deleted_at IS NULL
+            GROUP BY p.id
+            ORDER BY total_sold DESC
+            LIMIT 10
+          ) q
+          LEFT JOIN products p ON
+            p.id = q.id
+          LEFT JOIN categories c ON
+            p.category_id = c.id
+        `;
+
+    return successResponse(
+      {
+        stats: {
+          totalCustomers: totalCustomers.total,
+          totalOrders: totalOrders.total,
+          totalRevenue: totalRevenue.total,
+          topSellingProducts,
+        },
+      },
+      "Get statistics successfully",
+      200
+    );
+  }),
+
   getTotalRevenue: controllerWrapper(
     async (_, res, { successResponse, sql }) => {
       // Get revenue

@@ -144,24 +144,19 @@ const ordersController = {
       );
     }
   ),
-  // Get revenue of orders by customerId
-  getRevenueByCustomerId: controllerWrapper(
-    async (req, _, { errorResponse, successResponse, sql }) => {
-      const { customerId } = req.params;
-      // Check if customerId existed
-      const [customer] = await sql`
-                SELECT id FROM customers WHERE id = ${customerId}
-            `;
-      if (!customer) {
-        return errorResponse(`Customer with id ${customerId} not found`, 404);
-      }
-      // Get revenue
-      const revenue = await sql`
-                SELECT SUM(total) as revenue
-                FROM orders
-                WHERE customer_id = ${customerId} AND status != 1304
-            `;
-      return successResponse({ revenue }, "Get revenue successfully", 200);
+
+  getOrderStatsToday: controllerWrapper(
+    async (_, res, { successResponse, sql }) => {
+      const [orderStats] = await sql`
+    SELECT COUNT(*) as total_orders,
+    SUM(CASE WHEN status = ${OrderStatus.PENDING} THEN 1 ELSE 0 END) as pending_orders,
+    SUM(CASE WHEN status = ${OrderStatus.DELIVERED} THEN 1 ELSE 0 END) as delivered_orders,
+    SUM(CASE WHEN status = ${OrderStatus.CANCELED} THEN 1 ELSE 0 END) as canceled_orders
+    FROM orders
+    WHERE DATE_TRUNC('day', created_at) = CURRENT_DATE;
+  `;
+
+      return successResponse({ orderStats }, "Get order stats", 200);
     }
   ),
 };

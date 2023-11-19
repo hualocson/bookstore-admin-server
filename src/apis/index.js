@@ -9,6 +9,7 @@ import addressesRoutes from "./routes/addresses.routes";
 import customersRoutes from "./routes/customers.routes";
 import couponsRoutes from "./routes/coupons.routes";
 import productDetailsRoutes from "./routes/productDetails.routes";
+import statisticsRoute from "./routes/statistics.routes";
 
 // guaranteed to get dependencies
 export default () => {
@@ -23,5 +24,6 @@ export default () => {
   addressesRoutes(app);
   customersRoutes(app);
   couponsRoutes(app);
+  statisticsRoute(app);
   return app;
 };
