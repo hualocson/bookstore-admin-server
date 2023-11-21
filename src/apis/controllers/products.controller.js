@@ -14,7 +14,7 @@ const productsController = {
   createProduct: controllerWrapper(
     async (req, _, { errorResponse, successResponse, sql }) => {
       /** @type {ProductData} */
-      const { categoryId, name, description, image, price, quantity } =
+      const { categoryId, name, description, image, price, quantity, status } =
         req.body;
       let slug = slugify(name);
       let counter = 1;
@@ -44,7 +44,7 @@ const productsController = {
         VALUES
           (${categoryId}, ${name}, ${slug}, ${description ?? ""}, ${image}, ${
             price ?? 0
-          }, ${quantity ?? 0}, ${ProductStatus.IN_STOCK})
+          }, ${quantity ?? 0}, ${status ?? ProductStatus.IN_STOCK})
         RETURNING id, name, slug
       `;
 

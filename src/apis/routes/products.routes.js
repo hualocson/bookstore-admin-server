@@ -40,6 +40,12 @@ const productsRoutes = (router) => {
       .optional()
       .isString()
       .withMessage("Description must be a string"),
+    body("status")
+      .optional()
+      .isInt()
+      .withMessage("Status must be a number")
+      .isIn(Object.values(ProductStatus))
+      .withMessage("Invalid status!"),
     productsController.createProduct
   );
 

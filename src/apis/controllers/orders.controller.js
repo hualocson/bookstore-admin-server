@@ -153,7 +153,6 @@ const ordersController = {
     SUM(CASE WHEN status = ${OrderStatus.DELIVERED} THEN 1 ELSE 0 END) as delivered_orders,
     SUM(CASE WHEN status = ${OrderStatus.CANCELED} THEN 1 ELSE 0 END) as canceled_orders
     FROM orders
-    WHERE DATE_TRUNC('day', created_at) = CURRENT_DATE;
   `;
 
       return successResponse({ orderStats }, "Get order stats", 200);
