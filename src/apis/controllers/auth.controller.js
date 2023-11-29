@@ -57,15 +57,16 @@ const authController = {
       const token = jwtGenerator(payload);
 
       // save token to cookie
-      res.cookie("admin_auth", token, {
-        httpOnly: true,
-        // secure: true, // only https
-        sameSite: "strict",
-      });
+      // res.cookie("admin_auth", token, {
+      //   httpOnly: true,
+      //   // secure: true, // only https
+      //   sameSite: "strict",
+      // });
 
       return successResponse(
         {
           payload: jwt.decode(token),
+          token,
         },
         "Login successful."
       );
