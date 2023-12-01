@@ -13,9 +13,9 @@ export default (app) => {
     app.use(morgan.errorHandler);
   }
 
-  // app.use(helmet());
+  app.use(helmet());
 
-  // app.enable("trust proxy");
+  app.enable("trust proxy");
 
   app.use(cookieParser());
   app.get("/status", (req, res) => {
@@ -25,7 +25,12 @@ export default (app) => {
     res.status(200).end();
   });
 
-  app.use(cors());
+  app.use(
+    cors({
+      credentials: true,
+      origin: configs.clientUrl,
+    })
+  );
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
