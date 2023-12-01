@@ -25,7 +25,7 @@ export default (app) => {
     res.status(200).end();
   });
 
-  app.use(cors());
+  // app.use(cors());
 
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
