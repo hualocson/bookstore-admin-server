@@ -27,7 +27,7 @@ export default (app) => {
 
   app.use(
     cors({
-      origin: true,
+      origin: "*", // allow to server to accept request from different origin
       credentials: true,
       methods: ["GET", "PUT", "POST", "DELETE", "PATCH", "OPTIONS"],
     })
