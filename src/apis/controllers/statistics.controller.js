@@ -12,7 +12,7 @@ const statisticsController = {
     const [totalOrders] = await sql`
             SELECT COUNT(id) as total
             FROM orders
-            WHERE deleted_at IS NULL
+            WHERE deleted_at IS NULL AND status = 1303
         `;
     const [totalRevenue] = await sql`
             SELECT SUM(total) as total
