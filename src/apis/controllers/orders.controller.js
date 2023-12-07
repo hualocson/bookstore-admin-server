@@ -66,10 +66,46 @@ const ordersController = {
       const { id } = req.params;
       // Check if order existed
       const [order] = await sql`
-                SELECT id FROM orders WHERE id = ${id}
+                SELECT id, status FROM orders WHERE id = ${id}
             `;
       if (!order) {
         return errorResponse(`Order with id ${id} not found`, 404);
+      }
+
+      // Check if status is valid before update
+      if (status === OrderStatus.CANCELED) {
+        if (
+          order.status === OrderStatus.CANCELED ||
+          order.status === OrderStatus.DELIVERED ||
+          order.status === OrderStatus.PROCESSED
+        ) {
+          return errorResponse(`Order with id ${id} cannot be updated`, 400);
+        }
+
+        // rollback quantity of product, set deleted_at for order_items
+        const orderItems = await sql`
+                    SELECT product_id, quantity
+                    FROM order_items
+                    WHERE order_id = ${id}
+                `;
+        await sql.begin(async (sql) => {
+          for (const item of orderItems) {
+            const [product] = await sql`
+                          SELECT id, quantity
+                          FROM products
+                          WHERE id = ${item.productId}
+                      `;
+            const newQuantity = product.quantity + item.quantity;
+            await sql`UPDATE products
+                      SET quantity = ${newQuantity}, sold = sold - ${item.quantity}
+                      WHERE id = ${item.productId}
+                      `;
+            await sql`
+                    UPDATE order_items
+                    SET deleted_at = NOW()
+                    WHERE order_id = ${id}`;
+          }
+        });
       }
 
       let column = "";

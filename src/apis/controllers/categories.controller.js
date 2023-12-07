@@ -41,9 +41,9 @@ const categoriesController = {
         INSERT INTO categories
           (name, slug, parent_id, description, image, status)
         VALUES
-          (${name}, ${slug}, ${parentId ?? null}, ${
-            description ?? ""
-          }, ${image}, ${CategoryStatus.ACTIVE})
+          (${name}, ${slug}, ${parentId ?? null}, ${description ?? ""}, ${
+            image ?? ""
+          }, ${CategoryStatus.ACTIVE})
         RETURNING id, name, slug
       `;
 

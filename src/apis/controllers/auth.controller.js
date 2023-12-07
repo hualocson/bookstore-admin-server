@@ -66,6 +66,7 @@ const authController = {
       return successResponse(
         {
           payload: jwt.decode(token),
+          token,
         },
         "Login successful."
       );
