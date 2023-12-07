@@ -11,17 +11,12 @@ const categoriesRoutes = (router) => {
   router.post(
     "/categories",
     adminAuthorization(2),
-    validateImageMiddleware("image"),
     body("name")
       .notEmpty()
       .withMessage("Name is required")
       .isString()
       .withMessage("Name must be a string"),
-    body("image")
-      .notEmpty()
-      .withMessage("Image is required")
-      .isURL()
-      .withMessage("Image must be a URL"),
+    body("image").optional().isURL().withMessage("Image must be a URL"),
     body("parentId")
       .optional()
       .isInt()
