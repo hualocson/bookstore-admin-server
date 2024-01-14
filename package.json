@@ -5,7 +5,10 @@
   "main": "src/index.js",
   "scripts": {
     "dev": "nodemon --exec babel-node src/index.js",
-    "vercel-build": "echo hello"
+    "build": "npm run clean && npm run build-babel",
+    "clean": "rm -rf ./build && mkdir build",
+    "build-babel": "babel ./src -d ./build/src",
+    "vercel-build": "npm run clean && npm run build-babel"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +37,7 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
+    "@babel/cli": "^7.23.4",
     "@babel/core": "^7.22.20",
     "@babel/node": "^7.22.19",
     "@babel/plugin-transform-runtime": "^7.22.15",
