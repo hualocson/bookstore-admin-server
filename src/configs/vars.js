@@ -40,4 +40,5 @@ export default {
   redisHost: osHelpers.getOsEnv("REDIS_HOST"),
   redisPort: osHelpers.getOsEnv("REDIS_PORT"),
   redisPassword: osHelpers.getOsEnvOptional("REDIS_PASSWORD"),
+  redisUser: osHelpers.getOsEnvOptional("REDIS_USER"),
 };

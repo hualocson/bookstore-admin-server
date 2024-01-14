@@ -7,6 +7,7 @@ const redisClient = createClient({
     port: configs.redisPort,
   },
   password: configs.redisPassword,
+  username: configs.redisUser,
 });
 
 export default redisClient;
