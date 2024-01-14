@@ -3,14 +3,13 @@
     "browser": true,
     "es2021": true
   },
-  "extends": ["standard", "prettier", "plugin:prettier/recommended"],
+  "extends": ["standard", "prettier"],
   "parserOptions": {
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
   "plugins": ["prettier"],
   "rules": {
-    "prettier/prettier": "warn",
     "no-unused-vars": "warn"
   }
 }
