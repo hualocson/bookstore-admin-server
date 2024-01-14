@@ -2,12 +2,14 @@
   "name": "admin-server-bookstore",
   "version": "1.0.0",
   "description": "",
+  "main": "./api/index.js",
   "scripts": {
     "dev": "nodemon --exec babel-node src/index.js",
     "build": "npm run clean && npm run build-babel",
     "clean": "rm -rf ./api && mkdir api",
     "build-babel": "babel ./src -d ./api",
-    "vercel-build": "npm run clean && npm run build-babel"
+    "vercel-build": "npm run clean && npm run build-babel",
+    "start": "node api/index.js"
   },
   "keywords": [],
   "author": "",
