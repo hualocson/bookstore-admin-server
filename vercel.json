@@ -1,6 +1,6 @@
 {
   "rewrites": [{
     "source": "/(.*)",
-    "destination": "/build/src"
+    "destination": "/build/src/prod.server.js"
   }]
 }
