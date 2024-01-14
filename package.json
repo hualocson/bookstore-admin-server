@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "nodemon --exec babel-node src/index.js",
     "build": "npm run clean && npm run build-babel",
-    "clean": "rm -rf ./build && mkdir build",
+    "clean": "rm -rf ./api && mkdir api",
     "build-babel": "babel ./src -d ./api",
     "vercel-build": "npm run clean && npm run build-babel"
   },
