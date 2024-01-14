@@ -7,7 +7,7 @@
     "build": "npm run clean && npm run build-babel",
     "clean": "rm -rf ./build && mkdir build",
     "build-babel": "babel ./src -d ./build/src",
-    "vercel-build": "echo hello"
+    "vercel-build": "npm run clean && npm run build-babel"
   },
   "keywords": [],
   "author": "",

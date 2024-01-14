@@ -1,4 +1,4 @@
-import startApp from "../src/app.js";
+import startApp from "@/app";
 
 const app = startApp();
 
