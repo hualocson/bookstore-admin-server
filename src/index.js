@@ -3,9 +3,7 @@ import startApp from "@/app";
 import logger from "@/configs/logger";
 import configs from "@/configs/vars";
 
-const server = http.createServer(startApp());
-
-server.listen(configs.port, () => {
+const server = http.createServer(startApp()).listen(configs.port, () => {
   logger.info(`Listening to port ${configs.port}`);
 });
 
