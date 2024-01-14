@@ -1,3 +1,3 @@
-import server from "@/index";
+import app from "./build/index.js"
 
-export default server;
+export default app
